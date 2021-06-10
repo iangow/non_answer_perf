@@ -1,6 +1,6 @@
 ## Non-answers: Measurement Approach
 
-In "[Non-answers during Conference Calls](https://onlinelibrary.wiley.com/doi/epdf/10.1111/1475-679X.12371)", we classify a managerial response to a question as a non-answer using regular expressions to detect the presence of key phrases in the response.
+In "[Non-answers during Conference Calls](https://doi.org/10.1111/1475-679X.12371)", we classify a managerial response to a question as a non-answer using regular expressions to detect the presence of key phrases in the response.
 Non-answers can take a number of forms.
 Most non-answers contain explicit text indicating the speaker *refuses* to provide information, such as "we do not provide this disclosure" or "we do not disclose these numbers".
 Other non-answers suggest the speaker was *unable* to provide the requested information, such as "I do not know" or "I can't give you any specifics".
