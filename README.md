@@ -5,7 +5,7 @@ Non-answers can take a number of forms.
 Most non-answers contain explicit text indicating the speaker *refuses* to provide information, such as "we do not provide this disclosure" or "we do not disclose these numbers".
 Other non-answers suggest the speaker was *unable* to provide the requested information, such as "I do not know" or "I can't give you any specifics".
 A final, smaller category (*after-call*) involves an undertaking to provide the information after the conference call, such as "let's discuss it after the call" or "we could take that off-line".
-The appendix to Appendix  provides examples and presents the set of regular expressions we use to identify non-answers.
+The appendix to the paper provides examples and presents the set of regular expressions we use to identify non-answers.
 
 ## Gold standard
 
