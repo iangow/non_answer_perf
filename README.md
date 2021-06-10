@@ -1,10 +1,10 @@
 ## Non-answers: Measurement Approach
 
-In "[Non-answers during Conference Calls](https://onlinelibrary.wiley.com/doi/epdf/10.1111/1475-679X.12371)" classify a managerial response to a question as a non-answer using regular expressions to detect the presence of key phrases in the response.
+In "[Non-answers during Conference Calls](https://onlinelibrary.wiley.com/doi/epdf/10.1111/1475-679X.12371)", we classify a managerial response to a question as a non-answer using regular expressions to detect the presence of key phrases in the response.
 Non-answers can take a number of forms.
-Most non-answers contain explicit text indicating the speaker *refuses* to provide information, such as "we do not provide this disclosure" or "we do not disclose these numbers."
-Other non-answers suggest the speaker was *unable* to provide the requested information, such as "`I do not know" or "I can't give you any specifics."
-A final, smaller category (*after-call*) involves an undertaking to provide the information after the conference call, such as "let's discuss it after the call" or "we could take that off-line."
+Most non-answers contain explicit text indicating the speaker *refuses* to provide information, such as "we do not provide this disclosure" or "we do not disclose these numbers".
+Other non-answers suggest the speaker was *unable* to provide the requested information, such as "I do not know" or "I can't give you any specifics".
+A final, smaller category (*after-call*) involves an undertaking to provide the information after the conference call, such as "let's discuss it after the call" or "we could take that off-line".
 The appendix to Appendix  provides examples and presents the set of regular expressions we use to identify non-answers.
 
 ## Gold standard
