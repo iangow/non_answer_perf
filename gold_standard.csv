@@ -1,4 +1,4 @@
-file_name,section,answer_nums,obs_type,is_unable,is_refuse,is_after_call,is_nonans
+file_name,section,answer_nums,obs_type,is_unable,is_refuse,is_aftercall,is_nonans
 5070597_T,1,"{23,25}",train,FALSE,FALSE,FALSE,FALSE
 1313830_T,1,"{13,14,15,17}",train,FALSE,TRUE,FALSE,TRUE
 3307581_T,1,{32},test,FALSE,FALSE,FALSE,FALSE
