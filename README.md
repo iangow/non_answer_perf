@@ -21,6 +21,7 @@ A key element of this "gold standard" corpus is an indicator variable *Non-answe
 
 We then split our "gold standard" corpus into two sub-samples: a training sample comprising 1,296 responses and a test sample comprising 500 responses.
 This gold sample is available here as [gold_standard.csv](https://github.com/iangow/non_answer_perf/blob/main/gold_standard.csv).
+The underlying text associated with the gold standard is available [here](https://github.com/iangow/non_answer_perf/blob/main/gold_standard_text.csv).
 
 ## Development of classification algorithm
 
