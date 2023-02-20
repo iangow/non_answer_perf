@@ -1,0 +1,135 @@
+---
+title: "Classification performance of the non-answers function"
+---
+
+The data and code here produces the in- and out-of-sample classification performance statistics reported in [Non-answers during Conference Calls](https://doi.org/10.1111/1475-679X.12371).
+
+We import the `non_answers` function from the `ling_features` package, which we have made available on PyPI [here](https://pypi.org/project/ling-features/).
+You can use `pip install ling_features` to install this on your system.
+We also use the Natural Language Toolkit (`ntlk`) to *tokenize* text into sentences before applying our `non_answers` function.
+Finally, we use Pandas here for its core functionality with data frames.
+
+```{python}
+from ling_features import non_answers, get_regexes_df
+from nltk import sent_tokenize
+import pandas as pd
+```
+
+Our **gold standard** contains information on whether a response or set of responses contained a non-answer and, if so, which categories of non-answers were present (i.e., "unable", "refuse", and "after-call").
+Note that the data are aggregated across several values of `speaker_number` to account for the possibility that more than one speaker might address a given question or that there might be back-and-forth between a given analyst and management.
+The values in `answer_nums` reflect this aggregation of `speaker_number` values (see data for `gold_standard_text` below).
+
+```{python}
+gold_standard = pd.read_csv("gold_standard.csv")
+gold_standard
+```
+
+The underlying text associated with the gold standard is found in `gold_standard_text.csv`.
+As you can see, each observation has a `speaker_number` value, which indicates the row in the underlying data from which it comes, and a value for `answer_nums`, which reflects the aggregation of a response discussed above.
+
+These data are derived from XML files provided by StreetEvents using code available [here](https://github.com/iangow/se_core).
+The colum `response_to_analyst` indicates whether the uttterance in `speaker_text` was made in response to a question from an *analyst*.
+(This column is `True` in all but two cases, which are utterances made by management during the Q&A portion of their respective calls, but not clearly in response to a question from an analyst.)
+
+```{python}
+gold_standard_text = pd.read_csv("gold_standard_text.csv")
+gold_standard_text
+```
+
+The following function applies the `non_answer` function from the `ling_features` package to each utterance and then aggregates the indicator for a non-answer across values of `('file_name', 'section', 'answer_nums')` so as to line up with the data in `gold_standard`.
+
+```{python}
+regexes = get_regexes_df()
+
+def get_nonans_calc(df):
+    
+    def get_regex_ids(data):
+        if data:
+            regex_ids = [ eval(item)['regex_id'] for item in data]
+            return [regexes['category'][i] for i in regex_ids]
+        else:
+            return None
+        
+    def is_non_answer(data, types = ['REFUSE', 'UNABLE', 'AFTERCALL']):
+        if data:
+            return len(set(types).intersection(data)) > 0
+        else:
+            return False
+  
+    df['non_answers'] = df['speaker_text'].apply(sent_tokenize).map(non_answers)
+    df['non_answer_types'] = df['non_answers'].map(get_regex_ids)
+    df['is_nonans_calc'] =  df['non_answer_types'].map(is_non_answer)
+    
+    for type in ['REFUSE', 'UNABLE', 'AFTERCALL']:
+        df['is_' + type.lower() + '_calc'] =  df['non_answer_types']. \
+            map(lambda x: is_non_answer(x, types = [type]))
+    
+    return df[['file_name', 'section', 'answer_nums',
+               'is_nonans_calc', 'is_refuse_calc',
+               'is_unable_calc', 'is_aftercall_calc']]. \
+                groupby(by = ['file_name', 'section', 'answer_nums']).any()
+```
+
+```{python}
+df_nonans_calc = get_nonans_calc(gold_standard_text)
+df_nonans_calc
+```
+
+```{python}
+df = gold_standard.merge(df_nonans_calc, 
+                         on = ['file_name', 'section', 'answer_nums'])
+```
+
+```{python}
+def print_stats(df, type = 'nonans'):
+    var = 'is_' + type
+    var_calc = 'is_' + type + '_calc'
+    
+    tn = sum((df[var] == df[var_calc]) & ~df[var_calc])
+    fp = sum((df[var] != df[var_calc]) & df[var_calc])
+    fn = sum((df[var] != df[var_calc]) & ~df[var_calc])
+    tp = sum((df[var] == df[var_calc]) & df[var_calc])
+    
+    print("Accuracy {:.2f}%".format( 100 * (tp + tn)/(tp + tn + fp + fn)))
+    if tp + fp > 0:
+        print("Precision {:.2f}%".format( 100 * tp/(tp + fp)))
+    if tp + fn > 0:
+        print("True positive rate {:.2f}%".format( 100 * tp/(tp + fn)))
+```
+
+```{python}
+print_stats(df[df['obs_type']=='test'])
+```
+
+```{python}
+print_stats(df[df['obs_type']=='train'])
+```
+
+Note that in our paper, we omitted all responses that were not responses to *analysts*.
+This affected two observations that were in our gold standard.
+
+```{python}
+gold_standard_text_alt = gold_standard_text[gold_standard_text['response_to_analyst']].copy()
+                   
+df_nonans_calc = get_nonans_calc(gold_standard_text_alt)
+df = gold_standard.merge(df_nonans_calc, on = ['file_name', 'section', 'answer_nums'])
+```
+
+This has no impact on our `test` sample.
+
+```{python}
+print_stats(df[df['obs_type']=='test'])
+```
+
+But omission of these data points does affect the in-sample (`train`) performance of our classifier.
+The statistics reported in the paper are these more conservative values.
+
+```{python}
+print_stats(df[df['obs_type']=='train'])
+```
+
+Statistics for specific types of non-answer can be obtained using the `type` argument.
+
+```{python}
+print_stats(df[df['obs_type']=='train'], type = "refuse")
+```
